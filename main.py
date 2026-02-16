@@ -60,4 +60,21 @@ if __name__ == '__main__':
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     
     print("Bot is starting...")
+
+    import os
+# ... baki code ...
+if __name__ == '__main__':
+    # ... baki code ...
+    
+    # Ye line add karein Render ko dhoka dene ke liye taki wo timeout na kare
+    import http.server
+    import socketserver
+    import threading
+    def start_server():
+        with socketserver.TCPServer(("", int(os.environ.get("PORT", 8080))), http.server.SimpleHTTPRequestHandler) as httpd:
+            httpd.serve_forever()
+    threading.Thread(target=start_server, daemon=True).start()
+
+    application.run_polling()
+
     application.run_polling()
