@@ -7,24 +7,26 @@ from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 import google.generativeai as genai
 
-# --- CONFIGURATION ---
+ --- CONFIGURATION ---
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-# Gemini AI Setup
-genai.configure(api_key=GEMINI_API_KEY)
+ Gemini AI Setup
+genai.configure(api_key=GEMINI_API_KEY) 
 model = genai.GenerativeModel('gemini-pro')
 
 # Logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-# --- FAKE SERVER FOR RENDER ---
+# --- RENDER TIMEOUT FIX (FAKE SERVER) ---
 def run_fake_server():
     port = int(os.environ.get("PORT", 8080))
-    with socketserver.TCPServer(("", port), http.server.SimpleHTTPRequestHandler) as httpd:
+    handler = http.server.SimpleHTTPRequestHandler
+    with socketserver.TCPServer(("", port), handler) as httpd:
+        print(f"Server started on port {port}")
         httpd.serve_forever()
 
-# --- FUNCTIONS ---
+# --- BOT FUNCTIONS ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         ["1) Aap mujse kya Janna chate hain? 🥰"],
@@ -34,24 +36,25 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ["8) Class 7 ka question answer?", "9) Class 6 ka question answer?"]
     ]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-    welcome_msg = "Namaste! Main hoon **@mozi_21_bot**. Kuch bhi puchiye!"
+    welcome_msg = "Namaste! Main hoon **@mozi_21_bot**. Main NCERT expert hoon. Kuch bhi puchiye!"
     await update.message.reply_text(welcome_msg, reply_markup=reply_markup, parse_mode='Markdown')
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_text = update.message.text
-    prompt_prefix = "Expert NCERT Teacher: Answer accurately for class 1-10: "
+    # Yahan AI ko NCERT instruction de rahe hain
+    prompt_prefix = "You are an expert NCERT teacher for classes 1-10. Answer this accurately: "
     try:
         response = model.generate_content(prompt_prefix + user_text)
         await update.message.reply_text(response.text)
-    except Exception:
+    except Exception as e:
         await update.message.reply_text("Technical error! API Key ya Network check karein.")
 
-# --- MAIN ---
+# --- MAIN START ---
 if __name__ == '__main__':
-    # Start fake server for Render
+    # 1. Render ka timeout error fix karne ke liye server start karein
     threading.Thread(target=run_fake_server, daemon=True).start()
-    
-    # Start Bot
+
+    # 2. Telegram Bot setup
     application = Application.builder().token(TELEGRAM_TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
