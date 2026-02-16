@@ -1,8 +1,5 @@
 import os
 import logging
-import threading
-import http.server
-import socketserver
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 import google.generativeai as genai
@@ -15,11 +12,6 @@ model = genai.GenerativeModel("gemini-1.5-flash")
 # Logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 # --- RENDER TIMEOUT FIX (FAKE SERVER) ---
-def run_fake_server():
-    port = int(os.environ.get("PORT", 8080))
-    handler = http.server.SimpleHTTPRequestHandler
-    with socketserver.TCPServer(("", port), handler) as httpd:
-        httpd.serve_forever()
 
 # --- FUNCTIONS ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -45,8 +37,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # --- MAIN ---
 if __name__ == "__main__":
-    # Fake server for Render
-    threading.Thread(target=run_fake_server, daemon=True).start()
+    port = int(os.environ.get("PORT", 10000))
 
     application = Application.builder().token(TELEGRAM_TOKEN).build()
     application.add_handler(CommandHandler("start", start))
@@ -54,9 +45,7 @@ if __name__ == "__main__":
 
     print("Bot is starting...")
 
-port = int(os.environ.get("PORT", 10000))
-
-application.run_webhook(
-    listen="0.0.0.0",
-    port=port,
-    webhook_url="https://mozi-21-bot.onrender.com/" + TELEGRAM_TOKEN)
+    application.run_webhook(
+        listen="0.0.0.0",
+        port=port,
+        webhook_url="https://mozi-21-bot.onrender.com/" + TELEGRAM_TOKEN)
