@@ -6,18 +6,13 @@ import socketserver
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 import google.generativeai as genai
-
  #--- CONFIGURATION ---
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
+TELEGRAM_TOKEN=os.getenv("TELEGRAM_TOKEN")GEMINI_API_KEY=os.getenv("GEMINI_API_KEY")
  Gemini AI Setup
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel('gemini-pro')
-
 # Logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-
 # --- RENDER TIMEOUT FIX (FAKE SERVER) ---
 def run_fake_server():
     port = int(os.environ.get("PORT", 8080))
