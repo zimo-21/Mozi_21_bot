@@ -4,8 +4,8 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 import google.generativeai as genai
 
 # --- CONFIGURATION ---
-TELEGRAM_TOKEN = "8318157415:AAECQ2wWSwAY8aWzsqw96hccEbH-3ds4KU8"
-GEMINI_API_KEY = "AIzaSyAPwgotRtvnGIYTWdekthF2S5HoyVTrXY8"
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Gemini AI Setup
 genai.configure(api_key=GEMINI_API_KEY)
