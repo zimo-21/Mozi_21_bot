@@ -1,3 +1,4 @@
+import os
 import logging
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
@@ -36,30 +37,27 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_text = update.message.text
-    chat_id = update.message.chat_id
-
-    # Bot ko instruction dena ki wo NCERT expert ki tarah behave kare
+    
+    # NCERT Instruction for AI
     prompt_prefix = (
         "You are an expert educational bot named mozi_21_bot. "
         "Provide 100% accurate answers based strictly on NCERT curriculum for classes 1 to 10. "
-        "Answer the following question clearly and correctly: "
+        "Answer the following question clearly in Hinglish or English as asked: "
     )
 
     try:
-        # AI se answer mangna
         response = model.generate_content(prompt_prefix + user_text)
         await update.message.reply_text(response.text)
     except Exception as e:
-        await update.message.reply_text("Maafi chahta hoon, abhi thodi dikkat ho rahi hai. Kripya thodi der baad koshish karein.")
+        await update.message.reply_text("Technical error! Kripya check karein ki API Key sahi hai ya nahi.")
 
 # --- MAIN ---
 
 if __name__ == '__main__':
     application = Application.builder().token(TELEGRAM_TOKEN).build()
     
-    # Handlers
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     
-    print("Bot is running...")
+    print("Bot is starting...")
     application.run_polling()
