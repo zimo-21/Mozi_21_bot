@@ -47,11 +47,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 if __name__ == "__main__":
     # Fake server for Render
     threading.Thread(target=run_fake_server, daemon=True).start()
-    
-    # Telegram Bot
+
     application = Application.builder().token(TELEGRAM_TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    
+
     print("Bot is starting...")
     application.run_polling()
+ 
