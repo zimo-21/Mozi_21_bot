@@ -53,5 +53,10 @@ if __name__ == "__main__":
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     print("Bot is starting...")
-    application.run_polling()
- 
+
+port = int(os.environ.get("PORT", 10000))
+
+application.run_webhook(
+    listen="0.0.0.0",
+    port=port,
+    webhook_url="https://mozi-21-bot.onrender.com/" + TELEGRAM_TOKEN)
