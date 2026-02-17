@@ -7,10 +7,9 @@ import google.generativeai as genai
 TELEGRAM_TOKEN=os.getenv("TELEGRAM_TOKEN")
 GEMINI_API_KEY= os.getenv("GEMINI_API_KEY")
  #Gemini AI Setup
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-pro") 
-response = model.generate_content("Hello")
-print(response.text)
+genai.configure(api_key=os.getenv("GEMINI_API_KEY")
+model = genai.GenerativeModel("gemini-1.5-flash")
+
 # Logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 # --- RENDER TIMEOUT FIX (FAKE SERVER) ---
@@ -33,7 +32,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     prompt_prefix = "You are an expert NCERT teacher for classes 1-10. Answer this accurately: "
     try:
         response = model.generate_content(prompt_prefix + user_text)
-        await update.message.reply_text(response.text)
+await update.message.reply_text(response.text)
     except Exception:
         await update.message.reply_text("Technical error! API Key check karein.")
 
